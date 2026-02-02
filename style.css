@@ -10,7 +10,40 @@
   box-sizing: border-box;
 }
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+  scroll-padding-top: 100px;
+  scroll-timeline: view();
+}
+
+body {
+  font-family: 'quizlo', sans-serif;
+  background: var(--bg);
+  color: var(--dark);
+  scroll-behavior: auto;
+  overflow-x: hidden;
+}
+
+* {
+  scroll-behavior: auto !important;
+}
+
+/* Smooth scrollbar styling for webkit browsers */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a6b0aa;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7a8078;
 }
 
 

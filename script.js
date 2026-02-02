@@ -275,6 +275,48 @@ document.getElementById("closeTopBar").onclick = () => {
   navbar.style.top = "0";
 };
 
+//  ULTRA SMOOTH SCROLL – CUSTOM EASING WITH MOMENTUM
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 + -2 * Math.pow(2 * t - 2, 3) / 2;
+}
+
+function smoothScrollTo(target, duration = 1000) {
+  const startPosition = window.scrollY;
+  const targetPosition = target.offsetTop - 100;
+  const distance = targetPosition - startPosition;
+  const startTime = performance.now();
+
+  function animation(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = easeInOutCubic(progress);
+    
+    window.scrollTo(0, startPosition + distance * ease);
+
+    if (progress < 1) {
+      requestAnimationFrame(animation);
+    }
+  }
+
+  requestAnimationFrame(animation);
+}
+
+//  SMOOTH SCROLL ENHANCEMENT – ANCHOR LINKS WITH EASING
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const href = this.getAttribute('href');
+    if (href === '#') return;
+    
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (target) {
+      smoothScrollTo(target, 800);
+      // Close mobile menu if open
+      document.getElementById("navMenu").classList.remove("active");
+    }
+  });
+});
+
 //  Mobile menu toggle
 document.getElementById("menuToggle").onclick = () => {
   document.getElementById("navMenu").classList.toggle("active");

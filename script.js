@@ -339,3 +339,15 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 document.getElementById("menuToggle").onclick = () => {
   document.getElementById("navMenu").classList.toggle("active");
 };
+
+// Top announcement bar close handler
+const closeTopBarBtn = document.getElementById("closeTopBar");
+const topBar = document.getElementById("topBar");
+const navbar = document.querySelector(".navbar");
+
+closeTopBarBtn?.addEventListener("click", () => {
+  if (topBar) {
+    topBar.style.display = "none";
+    if (navbar) navbar.style.top = "0px";
+  }
+});

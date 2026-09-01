@@ -67,15 +67,33 @@ nextBtn?.addEventListener("click", () => {
   loadModel(currentModelIndex);
 });
 
-requestIdleCallback?.(() => {
-  MODELS.slice(1).forEach((src) => {
+// Background pre-caching of remaining 3D models during idle time
+const preloadModels = () => {
+  const modelsToPreload = [
+    "./model/h1.glb",
+    "./model/h2.glb",
+    "./model/h3.glb",
+    "./model/h5.glb",
+    "./model/h8.glb",
+    "./model/h6.glb",
+    "./model/h7.glb"
+  ];
+
+  modelsToPreload.forEach((src) => {
+    fetch(src, { priority: "low" }).catch(() => {});
     const link = document.createElement("link");
     link.rel = "prefetch";
     link.as = "fetch";
     link.href = src;
     document.head.appendChild(link);
   });
-});
+};
+
+if ("requestIdleCallback" in window) {
+  requestIdleCallback(preloadModels);
+} else {
+  setTimeout(preloadModels, 1000);
+}
 
   //  EXPOSURE / COLOR RADIO (LIGHT)
 

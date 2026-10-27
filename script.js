@@ -1,53 +1,10 @@
 
 
 const modelViewer = document.querySelector(".showcase__model");
-const prevBtn = document.querySelector('.model-arrow[aria-label="Previous headphone"]');
-const nextBtn = document.querySelector('.model-arrow[aria-label="Next headphone"]');
-const navMenu = document.getElementById("navMenu");
-const menuToggle = document.getElementById("menuToggle");
-const mobileNavigation = window.matchMedia("(max-width: 1024px)");
-const navbar = document.querySelector(".navbar");
-
-function syncNavbarHeight() {
-  document.documentElement.style.setProperty("--navbar-height", `${Math.ceil(navbar.getBoundingClientRect().height)}px`);
-}
-
-syncNavbarHeight();
-new ResizeObserver(syncNavbarHeight).observe(navbar);
-
-const featureBox = document.querySelector(".feature-box");
-function syncFeatureOverlap() {
-  document.documentElement.style.setProperty("--feature-overlap", `${Math.ceil(featureBox.getBoundingClientRect().height / 2)}px`);
-}
-
-syncFeatureOverlap();
-new ResizeObserver(syncFeatureOverlap).observe(featureBox);
-
-function setMenuOpen(isOpen) {
-  navMenu.classList.toggle("active", isOpen);
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
-}
-
-menuToggle.addEventListener("click", () => {
-  setMenuOpen(menuToggle.getAttribute("aria-expanded") !== "true");
-});
-
-document.addEventListener("click", (event) => {
-  if (!event.target.closest(".navbar")) setMenuOpen(false);
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && menuToggle.getAttribute("aria-expanded") === "true") {
-    setMenuOpen(false);
-    menuToggle.focus();
-  }
-});
-
-mobileNavigation.addEventListener("change", () => setMenuOpen(false));
-
-const runWhenIdle = window.requestIdleCallback
-  ? window.requestIdleCallback.bind(window)
-  : (callback) => window.setTimeout(callback, 1000);
+const title = document.querySelector(".title");
+const radios = document.querySelectorAll('input[name="modelColor"]');
+const prevBtn = document.querySelector(".next img:first-child");
+const nextBtn = document.querySelector(".next img:last-child");
 
 
   //  SCREEN LOADER – ONLY MAIN MODEL CONTROLS IT
@@ -72,37 +29,31 @@ document.addEventListener("DOMContentLoaded", () => {
   //  MODEL SWITCHING + PRELOAD (BACKGROUND)
 
 const MODELS = [
-  "./model/h3.glb",
+  "./model/headphone.glb",
   "./model/h1.glb",
   "./model/h2.glb",
+  "./model/h3.glb",
 ];
 
 let currentModelIndex = 0;
-let modelSwitchTimer;
-
-function finishHeroModelLoad() {
-  modelViewer?.classList.remove("slide-in", "slide-out");
-}
-
-modelViewer?.addEventListener("load", finishHeroModelLoad);
-modelViewer?.addEventListener("error", finishHeroModelLoad);
 
 function loadModel(index) {
   if (!modelViewer) return;
 
-  clearTimeout(modelSwitchTimer);
   modelViewer.classList.add("slide-out");
 
-  modelSwitchTimer = setTimeout(() => {
-    const source = MODELS[index];
+  setTimeout(() => {
+    modelViewer.setAttribute("src", MODELS[index]);
     modelViewer.classList.remove("slide-out");
     modelViewer.classList.add("slide-in");
 
-    if (modelViewer.getAttribute("src") === source && modelViewer.loaded) {
-      finishHeroModelLoad();
-    } else {
-      modelViewer.setAttribute("src", source);
-    }
+    modelViewer.addEventListener(
+      "load",
+      () => {
+        modelViewer.classList.remove("slide-in");
+      },
+      { once: true }
+    );
   }, 300);
 }
 
@@ -122,6 +73,7 @@ const preloadModels = () => {
     "./model/h1.glb",
     "./model/h2.glb",
     "./model/h3.glb",
+    "./model/h5.glb",
     "./model/h8.glb",
     "./model/h6.glb",
     "./model/h7.glb"
@@ -137,7 +89,27 @@ const preloadModels = () => {
   });
 };
 
-runWhenIdle(preloadModels);
+if ("requestIdleCallback" in window) {
+  requestIdleCallback(preloadModels);
+} else {
+  setTimeout(preloadModels, 1000);
+}
+
+  //  EXPOSURE / COLOR RADIO (LIGHT)
+
+radios.forEach((radio) => {
+  radio.addEventListener("change", () => {
+    modelViewer?.setAttribute("exposure", radio.value);
+
+    if (!title) return;
+    title.style.color =
+      radio.value === "1"
+        ? "#ffffff"
+        : radio.value === "6"
+        ? "#3c3c3c"
+        : "#282828";
+  });
+});
 
   //  TESTIMONIAL SECTION – SCROLL LINKED PREMIUM MOTION/
 
@@ -147,37 +119,24 @@ const testimonialCards = document.querySelectorAll(".testimonial-card");
 if (testimonialSection && testimonialCards.length) {
   gsap.registerPlugin(ScrollTrigger);
 
-  gsap.matchMedia().add("(min-width: 768px)", () => {
-    gsap.set(testimonialCards, {
-      opacity: 0,
-      y: 140,
-      scale: 0.92,
-    });
-
-    gsap.to(testimonialCards, {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      stagger: 0.2,
-      ease: "none",
-      scrollTrigger: {
-        trigger: testimonialSection,
-        start: "top 90%",
-        end: "top 20%",
-        scrub: true,
-      },
-    });
+  gsap.set(testimonialCards, {
+    opacity: 0,
+    y: 140,
+    scale: 0.92,
   });
 
-  gsap.matchMedia().add("(max-width: 767px)", () => {
-    testimonialCards.forEach((card) => {
-      gsap.from(card, {
-        opacity: 0,
-        y: 32,
-        duration: 0.5,
-        scrollTrigger: { trigger: card, start: "top 95%", once: true },
-      });
-    });
+  gsap.to(testimonialCards, {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    stagger: 0.2,
+    ease: "none",
+    scrollTrigger: {
+      trigger: testimonialSection,
+      start: "top 90%",
+      end: "top 20%",
+      scrub: true,
+    },
   });
 }
   //  FAQ ACCORDION (NON-BLOCKING)
@@ -204,7 +163,7 @@ setTimeout(() => {
 
   //  PRODUCT THUMB MODEL SWAP (IDLE)
 
-runWhenIdle(() => {
+requestIdleCallback?.(() => {
   const thumbs = document.querySelectorAll(".thumb");
   const modelA = document.getElementById("modelA");
   const modelB = document.getElementById("modelB");
@@ -213,39 +172,23 @@ runWhenIdle(() => {
 
   let current = modelA;
   let next = modelB;
-  let pendingModel = null;
-
-  function finishModelSwap(event) {
-    if (event.target !== next || !pendingModel || next.getAttribute("src") !== pendingModel) return;
-
-    current.classList.remove("active");
-    next.classList.add("active");
-    thumbs.forEach((thumb) => {
-      const selected = thumb.dataset.model === pendingModel;
-      thumb.classList.toggle("active", selected);
-      thumb.setAttribute("aria-pressed", String(selected));
-    });
-    [current, next] = [next, current];
-    pendingModel = null;
-  }
-
-  modelA.addEventListener("load", finishModelSwap);
-  modelB.addEventListener("load", finishModelSwap);
 
   thumbs.forEach((thumb) => {
     thumb.addEventListener("click", () => {
-      const source = thumb.dataset.model;
-      if (source === current.getAttribute("src")) {
-        pendingModel = null;
-        return;
-      }
+      thumbs.forEach((t) => t.classList.remove("active"));
+      thumb.classList.add("active");
 
-      pendingModel = source;
-      if (next.getAttribute("src") === source && next.loaded) {
-        finishModelSwap({ target: next });
-      } else {
-        next.setAttribute("src", source);
-      }
+      next.setAttribute("src", thumb.dataset.model);
+
+      next.addEventListener(
+        "load",
+        () => {
+          current.classList.remove("active");
+          next.classList.add("active");
+          [current, next] = [next, current];
+        },
+        { once: true }
+      );
     });
   });
 });
@@ -295,37 +238,24 @@ const productCards = document.querySelectorAll(".product-card");
 if (productSection && productCards.length) {
   gsap.registerPlugin(ScrollTrigger);
 
-  gsap.matchMedia().add("(min-width: 768px)", () => {
-    gsap.set(productCards, {
-      opacity: 0,
-      y: 160,
-      scale: 0.9,
-    });
-
-    gsap.to(productCards, {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      ease: "none",
-      stagger: 0.25,
-      scrollTrigger: {
-        trigger: productSection,
-        start: "top 95%",
-        end: "top 10%",
-        scrub: true,
-      },
-    });
+  gsap.set(productCards, {
+    opacity: 0,
+    y: 160,
+    scale: 0.9,
   });
 
-  gsap.matchMedia().add("(max-width: 767px)", () => {
-    productCards.forEach((card) => {
-      gsap.from(card, {
-        opacity: 0,
-        y: 32,
-        duration: 0.5,
-        scrollTrigger: { trigger: card, start: "top 95%", once: true },
-      });
-    });
+  gsap.to(productCards, {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    ease: "none",
+    stagger: 0.25,
+    scrollTrigger: {
+      trigger: productSection,
+      start: "top 95%",
+      end: "top 10%",
+      scrub: true,
+    },
   });
 }
 
@@ -355,6 +285,13 @@ if (counterEl) {
     },
   });
 }
+document.getElementById("closeTopBar").onclick = () => {
+  const topBar = document.getElementById("topBar");
+  const navbar = document.querySelector(".navbar");
+
+  topBar.style.display = "none";
+  navbar.style.top = "0";
+};
 
 //  ULTRA SMOOTH SCROLL – CUSTOM EASING WITH MOMENTUM
 function easeInOutCubic(t) {
@@ -363,8 +300,7 @@ function easeInOutCubic(t) {
 
 function smoothScrollTo(target, duration = 1000) {
   const startPosition = window.scrollY;
-  const navbarHeight = document.querySelector(".navbar").offsetHeight;
-  const targetPosition = Math.max(0, target.getBoundingClientRect().top + startPosition - navbarHeight - 16);
+  const targetPosition = target.offsetTop - 100;
   const distance = targetPosition - startPosition;
   const startTime = performance.now();
 
@@ -372,7 +308,7 @@ function smoothScrollTo(target, duration = 1000) {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
     const ease = easeInOutCubic(progress);
-
+    
     window.scrollTo(0, startPosition + distance * ease);
 
     if (progress < 1) {
@@ -388,13 +324,30 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     const href = this.getAttribute('href');
     if (href === '#') return;
-
+    
     e.preventDefault();
     const target = document.querySelector(href);
     if (target) {
       smoothScrollTo(target, 800);
       // Close mobile menu if open
-      setMenuOpen(false);
+      document.getElementById("navMenu").classList.remove("active");
     }
   });
+});
+
+//  Mobile menu toggle
+document.getElementById("menuToggle").onclick = () => {
+  document.getElementById("navMenu").classList.toggle("active");
+};
+
+// Top announcement bar close handler
+const closeTopBarBtn = document.getElementById("closeTopBar");
+const topBar = document.getElementById("topBar");
+const navbar = document.querySelector(".navbar");
+
+closeTopBarBtn?.addEventListener("click", () => {
+  if (topBar) {
+    topBar.style.display = "none";
+    if (navbar) navbar.style.top = "0px";
+  }
 });

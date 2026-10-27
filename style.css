@@ -242,6 +242,7 @@ model-viewer::part(default-progress-bar) {
 
 .showcase__model {
   width: 50%;
+  scale: 1.05;
   height: calc(100% - 24px);
   margin-top: 24px;
   max-height: none;
@@ -1511,7 +1512,7 @@ input:focus-visible {
     align-items: stretch;
     height: min(660px, calc(100svh - var(--navbar-height) - 2 * var(--hero-gap) - var(--feature-overlap)));
     min-height: 0;
-    overflow: hidden;
+    overflow: visible;
     border-radius: 20px;
   }
   .showcase__model {

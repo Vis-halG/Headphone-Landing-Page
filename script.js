@@ -6,6 +6,19 @@ const radios = document.querySelectorAll('input[name="modelColor"]');
 const prevBtn = document.querySelector(".next img:first-child");
 const nextBtn = document.querySelector(".next img:last-child");
 
+const navbar = document.querySelector(".navbar");
+const featureBox = document.querySelector(".feature-box");
+
+function updateHeroSpace() {
+  document.documentElement.style.setProperty("--header-height", `${Math.ceil(navbar.getBoundingClientRect().height)}px`);
+  document.documentElement.style.setProperty("--hero-overlap", `${Math.ceil(featureBox.getBoundingClientRect().height / 2)}px`);
+}
+
+updateHeroSpace();
+const heroSpaceObserver = new ResizeObserver(updateHeroSpace);
+heroSpaceObserver.observe(navbar);
+heroSpaceObserver.observe(featureBox);
+
 
   //  SCREEN LOADER – ONLY MAIN MODEL CONTROLS IT
 

@@ -2,6 +2,9 @@
   --accent: #a6b0aa;
   --bg: #ffffff;
   --dark: #292c3a;
+  --header-height: 72px;
+  --hero-gap: clamp(12px, 3svh, 28px);
+  --hero-overlap: 56px;
 }
 
 * {
@@ -211,9 +214,10 @@ model-viewer::part(default-progress-bar) {
 }
 
 .showcase {
-  margin: 5vw;
-  
-  margin-top: 5vw;
+  margin: var(--hero-gap) 5vw;
+  height: min(900px, calc(100svh - var(--header-height) - 2 * var(--hero-gap) - var(--hero-overlap)));
+  min-height: 0;
+  padding-bottom: var(--hero-overlap);
   background: var(--accent);
   border-radius: 20px;
   display: flex;
@@ -224,8 +228,10 @@ model-viewer::part(default-progress-bar) {
 
 .showcase__model {
   width: 50%;
-  height: 37vw;
-  max-height: 700px;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  flex-shrink: 0;
   z-index: 20;
   filter: hue-rotate(190deg) saturate(1.2) brightness(1.1);
 }
@@ -233,10 +239,10 @@ model-viewer::part(default-progress-bar) {
 
 .showcase .title {
   position: absolute;
-  top: 30%;
+  top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 15vw;
+  font-size: min(15vw, 30svh);
   font-weight: 900;
   color: #fff;
   line-height: 1;
@@ -254,47 +260,59 @@ model-viewer::part(default-progress-bar) {
 .showCase-switch {
   display: flex;
   align-items: center;
-  gap: 10vw;
+  justify-content: space-between;
+  gap: clamp(16px, 4vw, 64px);
+  margin-top: 20px;
 }
 
 .showcase .next {
   display: flex;
   gap: 16px;
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 .showcase .next img {
+  display: block;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
   cursor: pointer;
   border: 1px solid #000;
   border-radius: 50%;
-  padding: 0.5vw;
+  padding: 11px;
 }
 
 
 .showCase-content {
-  padding-top: 13vw;
-  padding-right: 2vw;
+  flex: 1;
+  min-width: 0;
+  padding: clamp(40px, 12svh, 140px) 24px 24px 0;
 }
 
 .showCase-content h2 {
-  font-size: clamp(1rem, 1.3vw, 5.4rem);
+  font-size: clamp(1rem, 1.6vw, 1.8rem);
+  line-height: 1.2;
 }
 
 .showCase-content p {
-  font-size: clamp(0.5rem, 1.5vw, 1.2rem);
+  font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+  line-height: 1.45;
+  margin-top: 8px;
 }
 
 
 .showCase-buttons {
   display: flex;
   gap: 18px;
-  margin-top: 20px;
+  margin-top: 0;
+  align-items: center;
 }
 
 .showCase-buttons input[type="radio"] {
   appearance: none;
-  width: 1.5vw;
-  height: 1.5vw;
+  width: clamp(20px, 1.5vw, 28px);
+  height: clamp(20px, 1.5vw, 28px);
+  flex-shrink: 0;
   border-radius: 50%;
   cursor: pointer;
   background: linear-gradient(145deg, #f0f0f3, #ffffff);
@@ -347,8 +365,8 @@ model-viewer::part(default-progress-bar) {
   position: relative;
   z-index: 10;
   max-width: 80vw;
-  top: -3vw;
-  margin: -6vw auto 0;
+  top: 0;
+  margin: calc(-1 * (var(--hero-gap) + var(--hero-overlap))) auto 0;
   background: #858585;
   border-radius: 28px;
   display: flex;
@@ -1448,18 +1466,20 @@ model-viewer::part(default-progress-bar) {
 
 
 
-/* ================= MOBILE ================= */
-@media (max-width: 767px) {
+/* Keep the header compact before its desktop links run out of space. */
+@media (max-width: 1024px) {
 
   .nav-center {
     position: absolute;
-    top: 60px;
+    top: 100%;
     left: 0;
     right: 0;
     background: #fff;
     flex-direction: column;
-    gap: 24px;
-    padding: 30px;
+    gap: 8px;
+    padding: 16px 5vw;
+    max-height: calc(100dvh - var(--header-height));
+    overflow-y: auto;
     display: none;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     z-index: 99;
@@ -1470,60 +1490,77 @@ model-viewer::part(default-progress-bar) {
   }
 
   .menu-btn {
-    display: block;
+    display: inline-flex;
   }
 
+  .nav-center a {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+  }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 767px) {
+  .navbar { padding: 12px 5vw; gap: 8px; }
+  .navbar .logo { font-size: clamp(1.3rem, 5.8vw, 1.8rem); }
+  .nav-right { gap: 4px; flex-shrink: 0; }
+
   .showcase {
-    margin-top: 10vw;
-    flex-direction: column;
-    min-height: 80vh;
-    justify-content: center;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-height: 0;
+    align-items: stretch;
+    justify-content: stretch;
   }
 
   .showcase__model {
     width: 100%;
-    height: 100vw;
-    margin-top: 10vw;
+    height: 100%;
+    margin-top: 0;
   }
 
   .showCase-content {
-    padding: 10vw;
-    padding-top: 0vw;
+    padding: 8px 20px 20px;
     text-align: center;
   }
 
   .showcase .title {
-    top: 18%;
+    top: 16px;
+    transform: translateX(-50%);
     font-weight: 700;
-    font-size: 28vw;
+    font-size: min(26vw, 14svh);
+    line-height: 0.95;
     text-align: center;
     flex-direction: column;
+    align-items: center;
   }
 
   .showCase-content h2 {
-    font-size: clamp(1.7rem, 4.3vw, 5.4rem);
+    font-size: clamp(1.25rem, 5.5vw, 1.8rem);
   }
 
   .showCase-content p {
-    font-size: clamp(0.5rem, 2vw, 1.2rem);
+    font-size: 0.9rem;
   }
 
   .showCase-switch {
-    justify-content: space-around;
-
-
-
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 16px;
   }
 
   .showcase .next img {
 
-    padding: 1.5vw;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
   }
 
   .showCase-buttons input[type="radio"] {
     appearance: none;
-    width: 5.5vw;
-    height: 5.5vw;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     cursor: pointer;
     background: linear-gradient(145deg, #f0f0f3, #ffffff);
@@ -1690,4 +1727,46 @@ model-viewer::part(default-progress-bar) {
   .thumb {
     border-radius: 12px;
   }
+}
+
+/* Short screens retain room for the complete hero copy and controls. */
+@media (min-width: 768px) and (max-height: 600px) {
+  .showCase-content { padding-top: 24px; padding-bottom: 16px; }
+  .showCase-content h2 { font-size: 1.1rem; }
+  .showCase-content p { font-size: 0.85rem; line-height: 1.4; }
+  .showCase-switch { margin-top: 12px; }
+  .showcase .title {
+    left: 25%;
+    width: 50%;
+    justify-content: center;
+    font-size: min(7vw, 18svh);
+  }
+}
+
+@media (max-width: 767px) and (max-height: 600px) {
+  .showCase-content { padding: 8px 16px 16px; }
+  .showCase-content h2 { font-size: 1.2rem; }
+  .showCase-content p { font-size: 0.85rem; line-height: 1.4; }
+  .showCase-switch { margin-top: 12px; }
+  .showcase .title { font-size: min(23vw, 13svh); }
+}
+
+@media (min-width: 480px) and (max-width: 767px) and (max-height: 480px) {
+  .showcase { display: flex; align-items: center; }
+  .showcase__model { width: 45%; }
+  .showCase-content { padding: 40px 16px 16px 0; }
+  .showCase-content h2 { font-size: 1.1rem; }
+  .showCase-content p { font-size: 0.8rem; }
+  .showcase .title {
+    top: 12%;
+    left: 22.5%;
+    width: 45%;
+    justify-content: center;
+    flex-direction: row;
+    font-size: min(7vw, 18svh);
+  }
+  .showCase-buttons { gap: 10px; }
+  .showCase-buttons input[type="radio"] { width: 20px; height: 20px; }
+  .showcase .next { gap: 8px; }
+  .showcase .next img { width: 36px; height: 36px; padding: 8px; }
 }

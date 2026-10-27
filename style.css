@@ -60,71 +60,6 @@ model-viewer::part(default-progress-bar) {
 
 
 
-.top-bar {
-  background: #111;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 48px;
-  font-size: 0.85rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 38px;
-  z-index: 1000;
-  box-sizing: border-box;
-}
-
-.top-bar-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  text-align: center;
-  width: 100%;
-}
-
-.top-bar p {
-  margin: 0;
-  opacity: 0.9;
-}
-
-.top-link {
-  color: #fff;
-  font-weight: 600;
-  text-decoration: underline;
-  transition: opacity 0.2s ease;
-}
-
-.top-link:hover {
-  opacity: 0.8;
-}
-
-.close-btn {
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  opacity: 0.8;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.close-btn:hover {
-  opacity: 1;
-  transform: translateY(-50%) scale(1.1);
-}
-
 .navbar {
   display: flex;
   align-items: center;
@@ -134,7 +69,7 @@ model-viewer::part(default-progress-bar) {
   border-bottom: 1px solid #eee;
   position: sticky;
   width: 100%;
-  top: 38px;
+  top: 0;
   z-index: 100;
   transition: top 0.3s ease;
 }
@@ -1289,7 +1224,7 @@ model-viewer::part(default-progress-bar) {
       rgba(0, 0, 0, 0.35),
       rgba(0, 0, 0, 0.15),
       rgba(0, 0, 0, 0.45));
-  z-index: 2;
+  z-index: 1;
 }
 
 /* 3D MODELS */
@@ -1298,7 +1233,7 @@ model-viewer::part(default-progress-bar) {
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: 3;
   opacity: 0;
   transition: opacity 0.6s ease;
   pointer-events: none;
@@ -1306,12 +1241,12 @@ model-viewer::part(default-progress-bar) {
 
 .banner-model.active {
   opacity: 1;
-  z-index: 2;
+  z-index: 3;
 }
 
 .banner-content {
   position: relative;
-  z-index: 3;
+  pointer-events: none;
   height: 100%;
   padding: 4vw;
   display: flex;
@@ -1323,12 +1258,17 @@ model-viewer::part(default-progress-bar) {
 }
 
 .banner-content h1 {
+  position: relative;
+  z-index: 2;
   font-size: clamp(1.5rem, 4vw, 3.2rem);
   line-height: 1.25;
   max-width: 900px;
 }
 
 .banner-btn {
+  position: relative;
+  z-index: 4;
+  pointer-events: auto;
   margin-top: 24px;
   padding: 14px 34px;
   border-radius: 999px;
@@ -1351,14 +1291,20 @@ model-viewer::part(default-progress-bar) {
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  width: min(446px, calc(100% - 32px));
   gap: 14px;
-  z-index: 4;
+  z-index: 5;
 }
 
 .thumb {
-  width: 78px;
-  height: 78px;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  aspect-ratio: 1;
+  padding: 4px;
+  border: 2px solid transparent;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(8px);
@@ -1368,9 +1314,11 @@ model-viewer::part(default-progress-bar) {
   transition: 0.3s ease;
 }
 
-.thumb img {
-  width: 70%;
-  object-fit: contain;
+.thumb-model {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .thumb:hover {
@@ -1379,6 +1327,12 @@ model-viewer::part(default-progress-bar) {
 
 .thumb.active {
   background: rgba(255, 255, 255, 0.6);
+  border-color: #ff6a3d;
+}
+
+.thumb:focus-visible {
+  outline: 2px solid #ff6a3d;
+  outline-offset: 4px;
 }
 
 
@@ -1691,23 +1645,29 @@ model-viewer::part(default-progress-bar) {
 
   .product-banner {
     position: relative;
-    height: auto;
-    min-height: 80vh;
-    padding-bottom: 120px;
+    height: min(80svh, 700px);
+    min-height: 420px;
+    padding-bottom: 0;
   }
 
   .banner-content {
     justify-content: flex-start;
-    padding-top: 20vw;
+    padding: 24px 20px 110px;
+  }
+
+  .banner-content h1 {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 40px);
+    font-size: clamp(1.25rem, 5.6vw, 2rem);
   }
 
   .banner-btn {
-    position: absolute;
-    top: 750px;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
-    z-index: 5;
+    margin-top: auto;
+    min-height: 44px;
+    flex-shrink: 0;
   }
 
   .banner-thumbs {
@@ -1716,15 +1676,11 @@ model-viewer::part(default-progress-bar) {
     left: 50%;
     transform: translateX(-50%);
 
-    display: flex;
-    gap: 14px;
+    gap: 8px;
 
     max-width: 100%;
-    padding: 0 6vw;
-
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
+    padding: 0;
+    overflow: visible;
   }
 
   .banner-thumbs::-webkit-scrollbar {
@@ -1732,8 +1688,6 @@ model-viewer::part(default-progress-bar) {
   }
 
   .thumb {
-    flex: 0 0 auto;
-    width: 64px;
-    height: 64px;
+    border-radius: 12px;
   }
 }

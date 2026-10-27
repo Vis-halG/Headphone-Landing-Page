@@ -163,7 +163,11 @@ setTimeout(() => {
 
   //  PRODUCT THUMB MODEL SWAP (IDLE)
 
-requestIdleCallback?.(() => {
+const scheduleThumbSetup = window.requestIdleCallback
+  ? window.requestIdleCallback.bind(window)
+  : (callback) => setTimeout(callback, 0);
+
+scheduleThumbSetup(() => {
   const thumbs = document.querySelectorAll(".thumb");
   const modelA = document.getElementById("modelA");
   const modelB = document.getElementById("modelB");
@@ -172,23 +176,39 @@ requestIdleCallback?.(() => {
 
   let current = modelA;
   let next = modelB;
+  let pendingModel = null;
+
+  function finishModelSwap(event) {
+    if (event.target !== next || !pendingModel || next.getAttribute("src") !== pendingModel) return;
+
+    current.classList.remove("active");
+    next.classList.add("active");
+    thumbs.forEach((thumb) => {
+      const selected = thumb.dataset.model === pendingModel;
+      thumb.classList.toggle("active", selected);
+      thumb.setAttribute("aria-pressed", String(selected));
+    });
+    [current, next] = [next, current];
+    pendingModel = null;
+  }
+
+  modelA.addEventListener("load", finishModelSwap);
+  modelB.addEventListener("load", finishModelSwap);
 
   thumbs.forEach((thumb) => {
     thumb.addEventListener("click", () => {
-      thumbs.forEach((t) => t.classList.remove("active"));
-      thumb.classList.add("active");
+      const source = thumb.dataset.model;
+      if (source === current.getAttribute("src")) {
+        pendingModel = null;
+        return;
+      }
 
-      next.setAttribute("src", thumb.dataset.model);
-
-      next.addEventListener(
-        "load",
-        () => {
-          current.classList.remove("active");
-          next.classList.add("active");
-          [current, next] = [next, current];
-        },
-        { once: true }
-      );
+      pendingModel = source;
+      if (next.getAttribute("src") === source && next.loaded) {
+        finishModelSwap({ target: next });
+      } else {
+        next.setAttribute("src", source);
+      }
     });
   });
 });
@@ -285,13 +305,6 @@ if (counterEl) {
     },
   });
 }
-document.getElementById("closeTopBar").onclick = () => {
-  const topBar = document.getElementById("topBar");
-  const navbar = document.querySelector(".navbar");
-
-  topBar.style.display = "none";
-  navbar.style.top = "0";
-};
 
 //  ULTRA SMOOTH SCROLL – CUSTOM EASING WITH MOMENTUM
 function easeInOutCubic(t) {
@@ -339,15 +352,3 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 document.getElementById("menuToggle").onclick = () => {
   document.getElementById("navMenu").classList.toggle("active");
 };
-
-// Top announcement bar close handler
-const closeTopBarBtn = document.getElementById("closeTopBar");
-const topBar = document.getElementById("topBar");
-const navbar = document.querySelector(".navbar");
-
-closeTopBarBtn?.addEventListener("click", () => {
-  if (topBar) {
-    topBar.style.display = "none";
-    if (navbar) navbar.style.top = "0px";
-  }
-});

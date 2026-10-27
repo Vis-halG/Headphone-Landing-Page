@@ -37,19 +37,6 @@
   </div>
 
 
-  <div class="top-bar" id="topBar">
-    <button class="close-btn" id="closeTopBar" aria-label="Close Announcement">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
-    <div class="top-bar-content">
-      <p>Explore another project →</p>
-      <a href="https://agency-website-try.vercel.app/" class="top-link">Click Here</a>
-    </div>
-  </div>
-
   <header class="navbar">
     <div class="nav-left">
       <h1 class="logo">AuraBeats</h1>
@@ -597,29 +584,25 @@
       <button class="banner-btn">Shop Now</button>
     </div>
     <div class="banner-thumbs">
-      <div class="thumb active" data-model="./model/h5.glb">
-        <img
-          src="images/Headphone isolated on transparent background black headphone isolated generative ai _ Premium AI-generated PSD.png">
-      </div>
+      <button type="button" class="thumb active" data-model="./model/h5.glb" aria-label="View headphone style 1" aria-pressed="true">
+        <model-viewer class="thumb-model" src="./model/h5.glb" loading="lazy" environment-image="neutral" camera-orbit="30deg 75deg 105%" aria-hidden="true" tabindex="-1"></model-viewer>
+      </button>
 
-      <div class="thumb" data-model="./model/h8.glb">
-        <img src="images/Headphone PSD, High Quality Free PSD Templates for Download _ Freepik.png">
-      </div>
+      <button type="button" class="thumb" data-model="./model/h8.glb" aria-label="View headphone style 2" aria-pressed="false">
+        <model-viewer class="thumb-model" src="./model/h8.glb" loading="lazy" environment-image="neutral" camera-orbit="30deg 75deg 105%" aria-hidden="true" tabindex="-1"></model-viewer>
+      </button>
 
-      <div class="thumb" data-model="./model/h6.glb">
-        <img
-          src="images/Orange headphone isolated png orange headphone isolated on transparent background _ Premium AI-generated PSD.png">
-      </div>
+      <button type="button" class="thumb" data-model="./model/h6.glb" aria-label="View headphone style 3" aria-pressed="false">
+        <model-viewer class="thumb-model" src="./model/h6.glb" loading="lazy" environment-image="neutral" camera-orbit="30deg 75deg 105%" aria-hidden="true" tabindex="-1"></model-viewer>
+      </button>
 
-      <div class="thumb" data-model="./model/h7.glb">
-        <img
-          src="images/Orange headphone isolated png orange headphone isolated on transparent background _ Premium AI-generated PSD.png">
-      </div>
+      <button type="button" class="thumb" data-model="./model/h7.glb" aria-label="View headphone style 4" aria-pressed="false">
+        <model-viewer class="thumb-model" src="./model/h7.glb" loading="lazy" environment-image="neutral" camera-orbit="30deg 75deg 105%" aria-hidden="true" tabindex="-1"></model-viewer>
+      </button>
 
-      <div class="thumb" data-model="./model/h3.glb">
-        <img
-          src="images/Orange headphone isolated png orange headphone isolated on transparent background _ Premium AI-generated PSD.png">
-      </div>
+      <button type="button" class="thumb" data-model="./model/h3.glb" aria-label="View headphone style 5" aria-pressed="false">
+        <model-viewer class="thumb-model" src="./model/h3.glb" loading="lazy" environment-image="neutral" camera-orbit="30deg 75deg 105%" aria-hidden="true" tabindex="-1"></model-viewer>
+      </button>
 
 
     </div>
